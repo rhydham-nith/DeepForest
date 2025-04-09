@@ -811,3 +811,28 @@ def remove_alpha_channel(raster_path):
     image = np.moveaxis(image, 0, -1)
 
     return image
+
+
+def read_tile(raster_path):
+    """
+    Read a raster tile from the given path, remove alpha channel if present, 
+    and return the image in channel-last (height, width, channels) format.
+
+    Parameters:
+        raster_path (str): Path to the raster (.tif) file.
+
+    Returns:
+        np.ndarray: Raster image array with shape (height, width, 3).
+    """
+
+    with rasterio.open(raster_path) as src:
+        image = src.read()  # Read image (channel-first format)
+
+        # Remove alpha channel if present
+        if image.shape[0] == 4:
+            image = image[:3]
+
+        # Convert to channel-last format
+        image = np.moveaxis(image, 0, -1)
+
+    return image
